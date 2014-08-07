@@ -1,0 +1,165 @@
+# coding:utf-8
+# This file is part of TLDataUtil
+# It encapsulates python's basic file read & write functions which conforms "ReadLines" and "WriteLines".
+# It can also handle structured data files such as .CSV. "ReadColumn" and "WriteColumn" are such functions. 
+# Structured data as below:
+#
+#	header1 | header2 | header3 | header4
+#   --------------------------------------
+#	C1R1    | C2R1    | C3R1    | C4R1  
+#   --------------------------------------
+#	C1R2    | C2R2    | C3R2    | C4R2  
+#   --------------------------------------
+#	C1R3    | C2R3    | C3R3    | C4R3 
+#   --------------------------------------
+#
+# contact email: chishui2@gmail.com
+
+#SmartFile is a python file operations wrapper
+class SmartFile :
+	def __init__(self, filename) :
+		self.filename = filename
+		self.f = None
+
+	def __del__(self) :
+		self.__close()
+
+	def __close(self):
+		if self.f :
+			self.f.close()
+
+	def readlines(self):
+		self.__close()
+		self.f = open(self.filename, "r")
+		return self.f.readlines()
+
+	def writelines(self, lines):
+		self.__close()
+		self.f = open(filename, "w")
+		self.f.writelines(lines)
+
+
+headerkey = 'header'
+def ReadLines(filename):
+	''' Read line from file 
+
+	''' 
+	f = open(filename, "r")
+	lines = f.readlines()
+	f.close()
+	return lines
+
+# return data of ReadColumn is 
+# {'header':['header1', 'header2', 'header3', 'header4'], 'header1' : ['C1R1', 'C1R2', 'C1R3'], 'header2' : [...], 'header3' : [...], 'header4' : [...]}
+def ReadColumn(filename, spliter='\t', columncount = 0) :
+	''' Read file and retrieve column data
+	
+		return data is map with header as key and list 
+		as value
+	'''
+	lines = ReadLine(filename)
+	headers = lines[0].strip('\n').split(spliter)
+	#remove header line
+	lines[0:1] = []
+	if columncount > 0 :
+		headers[columncount:] = []
+
+	#initialize data buffer
+	data = {}
+	for header in headers :
+		data[header] = []
+
+	#add header tuple
+	data[headerkey] = headers
+
+	#splits lines and stores to data
+	for line in lines :
+		column = line.strip('\n').split(spliter)
+		# split line not more than 'columncount' columns
+		if columncount > 0 and columncount < len(column) :
+#####################################################################################
+			column[2 : len(column) - 1] =  [spliter.join(column[2 : len(column) -1]) ]
+#####################################################################################
+			#column[columncount - 1 :] = [spliter.join(column[columncount - 1 : ]) ]
+
+		for i in range(0, len(column)) :
+			key = data[headerkey][i]
+			data[key].append(column[i])
+
+	return data
+
+
+
+def WriteLines(lines, filename) :
+	''' Write line to file 
+
+	''' 
+	f = open(filename, "w")
+	f.writelines(lines)
+	f.close()
+
+
+def WriteColumn(data, filename) :
+	'''write data with column to file
+		
+		data must have key named "header" which gives column headers
+	'''
+	f = open(filename, 'w')
+
+	#write header
+	f.write('\t'.join(data[headerkey]) + '\n')
+
+	#get line count 
+	#!!!!! line count may be inconsistent 
+	count = len(data[data[headerkey][0]])
+
+	#write lines
+	for i in range(0, count) :
+		line = ''
+		for header in data[headerkey]:
+			line += data[header][i]
+			line += '\t'
+		line = line.strip('\t')
+		line += '\n'
+		f.write(line)
+
+	f.close()
+
+def AppendLines(lines, filename) :
+	''' append data to file
+
+	'''
+	f = open(filename, 'a')
+	for line in lines:
+		f.write(line)
+	f.close()
+
+def checkLineCount(data) :
+	'''check if data from io.ReadColumn have the same line counts
+	
+	'''
+	count = 0
+	lastheader = ''
+	for header in data[io.headerkey]:
+		if count and count != len(data[header]) :
+			print header,lastheader, len(data[header]), len(lastheader)
+			return False
+		else:
+			count = len(data[header])
+			lastheader = header
+	return True
+
+if __name__ == '__main__':
+	filename = "E:\\taoli\\a"
+	#lines = ReadLine(filename)
+	#WriteLine(lines, "E:\\apptemp.txt")
+	data = ReadLines(filename)
+	AppendLines(data, "E:\\taoli\\b")
+
+	#print(len(data['protein']))
+	# data = {}
+	# data['header'] = ['1', '2', '3']
+	# data['1'] = ['a', 'b', 'c']
+	# data['2'] = ['d', 'e', 'f']
+	# data['3'] = ['g', 'h', 'i']
+	#WriteColumn(data, out)
