@@ -1,5 +1,5 @@
 #coding:utf-8
-# This file is part of TLDataUtil
+# This file is part of Tabida
 # It can list specific files you want to handle.
 #
 # contact email: chishui2@gmail.com

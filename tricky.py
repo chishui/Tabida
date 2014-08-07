@@ -1,5 +1,5 @@
 # coding:utf-8
-# This file is part of TLDataUtil
+# This file is part of Tabida
 # This file contains some useful function for data processing.
 # contact email: chishui2@gmail.com
 

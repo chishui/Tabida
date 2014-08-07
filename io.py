@@ -1,5 +1,5 @@
-# coding:utf-8
-# This file is part of TLDataUtil
+# io.py
+# This file is part of Tabida
 # It encapsulates python's basic file read & write functions which conforms "ReadLines" and "WriteLines".
 # It can also handle structured data files such as .CSV. "ReadColumn" and "WriteColumn" are such functions. 
 # Structured data as below:
@@ -14,30 +14,6 @@
 #   --------------------------------------
 #
 # contact email: chishui2@gmail.com
-
-#SmartFile is a python file operations wrapper
-class SmartFile :
-	def __init__(self, filename) :
-		self.filename = filename
-		self.f = None
-
-	def __del__(self) :
-		self.__close()
-
-	def __close(self):
-		if self.f :
-			self.f.close()
-
-	def readlines(self):
-		self.__close()
-		self.f = open(self.filename, "r")
-		return self.f.readlines()
-
-	def writelines(self, lines):
-		self.__close()
-		self.f = open(filename, "w")
-		self.f.writelines(lines)
-
 
 headerkey = 'header'
 def ReadLines(filename):
