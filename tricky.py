@@ -2,7 +2,7 @@
 # This file is part of Tabida
 # This file contains some useful function for data processing.
 # contact email: chishui2@gmail.com
-
+import os
 def GetFileTags(files, removestrings) :
 	''' Get file tag from file name. Remove characteristic strings from file name.
 
@@ -38,18 +38,18 @@ def FilterLinesWithStartingRules(lines, startingrules = [], notstartingrules = [
 
 	filterlines = []
 	for line in lines:
-		linekept = False
 		for startingrule in startingrules:
 			if line.find(startingrule) == 0 :
-				linekept = True
-				break
+				filterlines.append(line)
+				continue
 
+		breakfalse = True
 		for notstartingrule in notstartingrules:
-			if line.find(notstartingrule) < 0 :
-				linekept = True
+			if line.find(notstartingrule) == 0 :
+				breakfalse = False
 				break
-		if linekept :
-			filterlines.append(line)
+		if breakfalse :
+			lfilterlines.append(line)
 
 	return filterlines
 
@@ -68,9 +68,9 @@ def GetColumnFromLines(lines, icolumn, spliter='\t', default='') :
 
 
 if __name__ == '__main__' :
-	#lines = ['*123', '*456', '\thahah', 'test', '*']
-	# lines = FilterLinesWithStartingRules(lines, notstartingrules = ['*'])
-	# print lines
+	lines = ['*123', '*456', '\thahah', 'test', '*']
+	lines = FilterLinesWithStartingRules(lines, notstartingrules = ['*', 't'])
+	print lines
 	# lines = ['1 2 3', '4 5 6', '7 8 ']
 	# print GetColumnFromLines(lines, 2, spliter=' ', default='0')
 

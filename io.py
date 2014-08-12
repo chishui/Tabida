@@ -16,13 +16,16 @@
 # contact email: chishui2@gmail.com
 
 headerkey = 'header'
-def ReadLines(filename):
+def ReadLines(filename, removeReturn = False):
 	''' Read line from file 
 
 	''' 
-	f = open(filename, "r")
-	lines = f.readlines()
-	f.close()
+	with open(filename, "r") as f:
+		lines = f.readlines()
+		f.close()
+
+	if removeReturn:
+		lines = [line.strip('\r\n').strip('\n') for line in lines ]
 	return lines
 
 # return data of ReadColumn is 
@@ -126,11 +129,14 @@ def checkLineCount(data) :
 	return True
 
 if __name__ == '__main__':
-	filename = "E:\\taoli\\a"
+	# filename = "E:\\taoli\\a"
 	#lines = ReadLine(filename)
 	#WriteLine(lines, "E:\\apptemp.txt")
-	data = ReadLines(filename)
-	AppendLines(data, "E:\\taoli\\b")
+	# data = ReadLines(filename)
+	# AppendLines(data, "E:\\taoli\\b")
+
+	print ReadLines("Readme.md", removeReturn = False)
+
 
 	#print(len(data['protein']))
 	# data = {}
