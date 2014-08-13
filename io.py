@@ -36,8 +36,8 @@ def ReadColumn(filename, spliter='\t', columncount = 0) :
 		return data is map with header as key and list 
 		as value
 	'''
-	lines = ReadLine(filename)
-	headers = lines[0].strip('\n').split(spliter)
+	lines = ReadLines(filename, removeReturn = True)
+	headers = lines[0].split(spliter)
 	#remove header line
 	lines[0:1] = []
 	if columncount > 0 :
@@ -108,10 +108,10 @@ def AppendLines(lines, filename) :
 	''' append data to file
 
 	'''
-	f = open(filename, 'a')
-	for line in lines:
-		f.write(line)
-	f.close()
+	with open(filename, 'a') as f:
+		for line in lines:
+			f.write(line)
+		f.close()
 
 def checkLineCount(data) :
 	'''check if data from io.ReadColumn have the same line counts
