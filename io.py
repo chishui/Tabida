@@ -128,6 +128,32 @@ def checkLineCount(data) :
 			lastheader = header
 	return True
 
+def mergeFile(file1, file2, baseHeader, outFile, voidValue='N/A') :
+	''' merge file1 and file2 based on column of same header
+
+	'''
+	data1 = ReadColumn(file1)
+	data2 = ReadColumn(file2)
+
+	dict1 = {}
+	for i, data in enumerate(data1[baseHeader]) :
+		dict1[data] = i
+
+	data2[headerkey][len(data2[headerkey]) :] = [item for item in data1[headerkey] if item != baseHeader]
+	for head in data1[headerkey]:
+		if head == baseHeader:
+			continue
+		data2[head] = [voidValue for i in data2[baseHeader]]
+
+	for i, key in enumerate(data2[baseHeader]):
+		if key in dict1:
+			index = dict1[key]
+			for head in data1[headerkey][1:]:
+				data2[head][i] = data1[head][index]
+
+	WriteColumn(data2, outFile)
+
+
 if __name__ == '__main__':
 	# filename = "E:\\taoli\\a"
 	#lines = ReadLine(filename)

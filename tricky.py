@@ -49,7 +49,7 @@ def FilterLinesWithStartingRules(lines, startingrules = [], notstartingrules = [
 				breakfalse = False
 				break
 		if breakfalse :
-			lfilterlines.append(line)
+			filterlines.append(line)
 
 	return filterlines
 
