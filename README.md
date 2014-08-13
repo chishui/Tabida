@@ -1,7 +1,7 @@
 Tabida
 ======
 
-The name "Tabida" derived from "TAoli's Biological Data Analysis".
+The name "Tabida" derived from "TAoli's BIological Data Analysis".
 It is a very simple tool for some specific biological data analyzing. It does not need any other libraries dependency only but standard libraries of python.
 
 # io.py
