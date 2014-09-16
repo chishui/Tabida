@@ -43,6 +43,9 @@ def ReadColumn(filename, spliter='\t', columncount = 0) :
 	if columncount > 0 :
 		headers[columncount:] = []
 
+	#remove blank header
+	headers = [i for i in headers if i != '']
+
 	#initialize data buffer
 	data = {}
 	for header in headers :
@@ -53,7 +56,7 @@ def ReadColumn(filename, spliter='\t', columncount = 0) :
 
 	#splits lines and stores to data
 	for line in lines :
-		column = line.strip('\n').split(spliter)
+		column = line.strip('\n').split(spliter)[:len(headers)]
 		# split line not more than 'columncount' columns
 		if columncount > 0 and columncount < len(column) :
 #####################################################################################
@@ -61,9 +64,12 @@ def ReadColumn(filename, spliter='\t', columncount = 0) :
 #####################################################################################
 			#column[columncount - 1 :] = [spliter.join(column[columncount - 1 : ]) ]
 
-		for i in range(0, len(column)) :
+		for i in range(0, len(headers)) :
 			key = data[headerkey][i]
-			data[key].append(column[i])
+			if i >= len(column) :
+				data[key].append('')
+			else:
+				data[key].append(column[i])
 
 	return data
 
@@ -127,7 +133,7 @@ def checkLineCount(data) :
 			count = len(data[header])
 			lastheader = header
 	return True
-
+import copy
 def mergeFile(file1, file2, baseHeader, outFile, voidValue='N/A') :
 	''' merge file1 and file2 based on column of same header
 
@@ -135,23 +141,59 @@ def mergeFile(file1, file2, baseHeader, outFile, voidValue='N/A') :
 	data1 = ReadColumn(file1)
 	data2 = ReadColumn(file2)
 
-	dict1 = {}
+	outdata = {}
+	
+	dictOfTwoFile = {}
 	for i, data in enumerate(data1[baseHeader]) :
-		dict1[data] = i
+		dictOfTwoFile.setdefault(data, {})
+		dictOfTwoFile[data][1] = i
 
-	data2[headerkey][len(data2[headerkey]) :] = [item for item in data1[headerkey] if item != baseHeader]
-	for head in data1[headerkey]:
-		if head == baseHeader:
-			continue
-		data2[head] = [voidValue for i in data2[baseHeader]]
+	for i, data in enumerate(data2[baseHeader]) :
+		dictOfTwoFile.setdefault(data, {})
+		dictOfTwoFile[data][2] = i
 
-	for i, key in enumerate(data2[baseHeader]):
-		if key in dict1:
-			index = dict1[key]
-			for head in data1[headerkey][1:]:
-				data2[head][i] = data1[head][index]
+	outdata[headerkey] = copy.copy(data1[headerkey])
+	outdata[headerkey][len(outdata[headerkey]) :] = [item for item in data2[headerkey] if item not in outdata[headerkey]]
+	print outdata[headerkey], dictOfTwoFile
+	for header in outdata[headerkey]:
+		outdata[header] = []
+		for item in dictOfTwoFile:
+			index1 = dictOfTwoFile[item].get(1, -1)
+			index2 = dictOfTwoFile[item].get(2, -1)
+			#print header, item, index1, index2
+			value = voidValue
+			while True:			
+				if header in data1[headerkey] and header in data2[headerkey] :
+					if index1 >=0 and index2 >= 0 :
+						value = data1[header][index1] if data1[header][index1] != '' else data2[header][index2]
+						break
+				if header in data1[headerkey] and index1 >= 0:
+					value = data1[header][index1]
+				elif header in data2[headerkey] and index2 >= 0:
+					value = data2[header][index2]
+				break
+			
+			outdata[header].append(value)
 
-	WriteColumn(data2, outFile)
+
+	WriteColumn(outdata, outFile)
+
+
+	# data2[headerkey][len(data2[headerkey]) :] = [item for item in data1[headerkey] if item != baseHeader]
+	# for head in data1[headerkey]:
+	# 	if head == baseHeader:
+	# 		continue
+	# 	data2[head] = [voidValue for i in data2[baseHeader]]
+
+	# for i, key in enumerate(data2[baseHeader]):
+	# 	if key in dict1:
+	# 		index = dict1[key]
+	# 		for head in data1[headerkey][1:]:
+	# 			if i >= len(data2[head]) or index >= len(data1[head]) :
+	# 				print i, len(data2[head]), index, len(data1[head]), len(data1[baseHeader])
+	# 			data2[head][i] = data1[head][index]
+
+	# WriteColumn(data2, outFile)
 
 
 if __name__ == '__main__':
@@ -161,8 +203,7 @@ if __name__ == '__main__':
 	# data = ReadLines(filename)
 	# AppendLines(data, "E:\\taoli\\b")
 
-	print ReadLines("Readme.md", removeReturn = False)
-
+	mergeFile('t1.txt', 't2.txt', 'Prey', 'out.txt')
 
 	#print(len(data['protein']))
 	# data = {}
