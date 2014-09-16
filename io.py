@@ -32,9 +32,8 @@ def ReadLines(filename, removeReturn = False):
 # {'header':['header1', 'header2', 'header3', 'header4'], 'header1' : ['C1R1', 'C1R2', 'C1R3'], 'header2' : [...], 'header3' : [...], 'header4' : [...]}
 def ReadColumn(filename, spliter='\t', columncount = 0) :
 	''' Read file and retrieve column data
-	
-		return data is map with header as key and list 
-		as value
+		return data is map with header as key and list as value
+		
 	'''
 	lines = ReadLines(filename, removeReturn = True)
 	headers = lines[0].split(spliter)
@@ -49,14 +48,18 @@ def ReadColumn(filename, spliter='\t', columncount = 0) :
 	#initialize data buffer
 	data = {}
 	for header in headers :
-		data[header] = []
+		data[header] = ['' for line in lines]
 
 	#add header tuple
 	data[headerkey] = headers
 
 	#splits lines and stores to data
 	for line in lines :
+<<<<<<< HEAD
 		column = line.strip('\n').split(spliter)[:len(headers)]
+=======
+		column = line.split(spliter)
+>>>>>>> c0ce75939c652d3ba7f129caf44a59a1160fcdf5
 		# split line not more than 'columncount' columns
 		if columncount > 0 and columncount < len(column) :
 #####################################################################################
@@ -79,9 +82,9 @@ def WriteLines(lines, filename) :
 	''' Write line to file 
 
 	''' 
-	f = open(filename, "w")
-	f.writelines(lines)
-	f.close()
+	with open(filename, "w") as f:
+		f.writelines(lines)
+		f.close()
 
 
 def WriteColumn(data, filename) :
@@ -89,26 +92,25 @@ def WriteColumn(data, filename) :
 		
 		data must have key named "header" which gives column headers
 	'''
-	f = open(filename, 'w')
+	with open(filename, 'w') as f:
+		#write header
+		f.write('\t'.join(data[headerkey]) + '\n')
 
-	#write header
-	f.write('\t'.join(data[headerkey]) + '\n')
+		#get line count 
+		#!!!!! line count may be inconsistent 
+		count = len(data[data[headerkey][0]])
 
-	#get line count 
-	#!!!!! line count may be inconsistent 
-	count = len(data[data[headerkey][0]])
+		#write lines
+		for i in range(0, count) :
+			line = ''
+			for header in data[headerkey]:
+				line += data[header][i]
+				line += '\t'
+			line = line.strip('\t')
+			line += '\n'
+			f.write(line)
 
-	#write lines
-	for i in range(0, count) :
-		line = ''
-		for header in data[headerkey]:
-			line += data[header][i]
-			line += '\t'
-		line = line.strip('\t')
-		line += '\n'
-		f.write(line)
-
-	f.close()
+		f.close()
 
 def AppendLines(lines, filename) :
 	''' append data to file
@@ -119,7 +121,7 @@ def AppendLines(lines, filename) :
 			f.write(line)
 		f.close()
 
-def checkLineCount(data) :
+def CheckLineCount(data) :
 	'''check if data from io.ReadColumn have the same line counts
 	
 	'''
@@ -133,8 +135,13 @@ def checkLineCount(data) :
 			count = len(data[header])
 			lastheader = header
 	return True
+<<<<<<< HEAD
 import copy
 def mergeFile(file1, file2, baseHeader, outFile, voidValue='N/A') :
+=======
+
+def MergeFile(file1, file2, baseHeader, outFile, voidValue='N/A') :
+>>>>>>> c0ce75939c652d3ba7f129caf44a59a1160fcdf5
 	''' merge file1 and file2 based on column of same header
 
 	'''
@@ -196,15 +203,27 @@ def mergeFile(file1, file2, baseHeader, outFile, voidValue='N/A') :
 	# WriteColumn(data2, outFile)
 
 
+def callLog(func):	
+	def _callLog() :
+		print 'begin call function:', func.func_name
+		func()
+		print 'end call function:', func.func_name
+
+	return _callLog
+
 if __name__ == '__main__':
 	# filename = "E:\\taoli\\a"
 	#lines = ReadLine(filename)
 	#WriteLine(lines, "E:\\apptemp.txt")
 	# data = ReadLines(filename)
 	# AppendLines(data, "E:\\taoli\\b")
+<<<<<<< HEAD
 
 	mergeFile('t1.txt', 't2.txt', 'Prey', 'out.txt')
 
+=======
+	#print ReadLines("Readme.md", removeReturn = False)
+>>>>>>> c0ce75939c652d3ba7f129caf44a59a1160fcdf5
 	#print(len(data['protein']))
 	# data = {}
 	# data['header'] = ['1', '2', '3']
@@ -212,3 +231,5 @@ if __name__ == '__main__':
 	# data['2'] = ['d', 'e', 'f']
 	# data['3'] = ['g', 'h', 'i']
 	#WriteColumn(data, out)
+	s = 'abcde'
+	print s.strip('de')
