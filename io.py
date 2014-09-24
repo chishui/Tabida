@@ -22,7 +22,6 @@ def ReadLines(filename, removeReturn = False):
 	''' 
 	with open(filename, "r") as f:
 		lines = f.readlines()
-		f.close()
 
 	if removeReturn:
 		lines = [line.strip('\r\n').strip('\n') for line in lines ]
@@ -84,7 +83,6 @@ def WriteLines(lines, filename) :
 	''' 
 	with open(filename, "w") as f:
 		f.writelines(lines)
-		f.close()
 
 
 def WriteColumn(data, filename) :
@@ -110,7 +108,6 @@ def WriteColumn(data, filename) :
 			line += '\n'
 			f.write(line)
 
-		f.close()
 
 def AppendLines(lines, filename) :
 	''' append data to file
@@ -119,7 +116,6 @@ def AppendLines(lines, filename) :
 	with open(filename, 'a') as f:
 		for line in lines:
 			f.write(line)
-		f.close()
 
 def CheckLineCount(data) :
 	'''check if data from io.ReadColumn have the same line counts
@@ -135,13 +131,9 @@ def CheckLineCount(data) :
 			count = len(data[header])
 			lastheader = header
 	return True
-<<<<<<< HEAD
+
 import copy
 def mergeFile(file1, file2, baseHeader, outFile, voidValue='N/A') :
-=======
-
-def MergeFile(file1, file2, baseHeader, outFile, voidValue='N/A') :
->>>>>>> c0ce75939c652d3ba7f129caf44a59a1160fcdf5
 	''' merge file1 and file2 based on column of same header
 
 	'''
@@ -217,13 +209,9 @@ if __name__ == '__main__':
 	#WriteLine(lines, "E:\\apptemp.txt")
 	# data = ReadLines(filename)
 	# AppendLines(data, "E:\\taoli\\b")
-<<<<<<< HEAD
 
 	mergeFile('t1.txt', 't2.txt', 'Prey', 'out.txt')
 
-=======
-	#print ReadLines("Readme.md", removeReturn = False)
->>>>>>> c0ce75939c652d3ba7f129caf44a59a1160fcdf5
 	#print(len(data['protein']))
 	# data = {}
 	# data['header'] = ['1', '2', '3']
